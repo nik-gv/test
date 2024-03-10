@@ -30,7 +30,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
-SPEED = 20
+SPEED = 1 
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -43,6 +43,7 @@ clock = pygame.time.Clock()
 
 
 # Тут опишите все классы игры.
+# ... (ваш остальной код)
 class GameObject:
     
     def __init__(self, body_color):
@@ -51,57 +52,33 @@ class GameObject:
     
     def draw(self):
         pass
-
-class Apple(GameObject):
+       
+class Apple:
 
     def __init__(self):
-        self.body_color =  (255, 0, 0)
-        self.position = randint(0, GRID_WIDTH) * GRID_SIZE
+        self.body_color = (255, 0, 0)
+        self.randomize_position()
 
     def randomize_position(self):
-        self.position = randint(0, GRID_WIDTH) * GRID_SIZE
+        self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE, randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
 
-    def draw(self):
-    pass
-        
-class Snake(GameObject):
-    length = 1
-    positions = ((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))
-    direction = RIGHT
-    next_direction = None
-    body_color = (0, 255, 0) 
-    
-    def __init__(self):
-        self.position = randint(0, GRID_WIDTH) * GRID_SIZE
-     
-    def update_direction(self):
-         if self.next_direction:
-             self.direction = self.next_direction
-             self.next_direction = None
-
-    def move(self):
-
-
-        
-        
-    
-
-
+    def draw(self, surface):
+        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(surface, self.body_color, rect)
+        pygame.draw.rect(surface, BORDER_COLOR, rect, 1)
 
 def main():
     # Тут нужно создать экземпляры классов.
-    ...
+    apple = Apple()
 
-    # while True:
-    #     clock.tick(SPEED)
-
-        # Тут опишите основную логику игры.
-        # ...
-
+    while True:
+        apple.draw(screen)
+        pygame.display.update()
+        clock.tick(SPEED)
+        print(1)
 
 if __name__ == '__main__':
     main()
-
 
 # Метод draw класса Apple
 # def draw(self, surface):
