@@ -30,7 +30,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
-SPEED = 1
+SPEED = 0.2
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -91,15 +91,17 @@ class Snake(GameObject):
 
     def move(self):
         head_position = self.get_head_position()
+        x = head_position[0]
+        y = head_position[1]
         if self.direction == UP:
-            self.positions.insert(0, (head_position[0], head_position[1] - GRID_SIZE))
+            self.positions.insert(0, (x, y - GRID_SIZE))
         elif self.direction == DOWN:
-            self.positions.insert(0, (head_position[0], head_position[1] + GRID_SIZE))
+            self.positions.insert(0, (x, y + GRID_SIZE))
         elif self.direction == LEFT:
-            self.positions.insert(0, (head_position[0] - GRID_SIZE, head_position[1]))
+            self.positions.insert(0, (x - GRID_SIZE, y))
         elif self.direction == RIGHT:
-            self.positions.insert(0, (head_position[0] + GRID_SIZE, head_position[1]))
-             
+            self.positions.insert(0, (x + GRID_SIZE, y))
+
         if len(self.positions) != 0:
             self.last = self.positions[-1]
             self.positions.pop(-1)
