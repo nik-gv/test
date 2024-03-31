@@ -30,7 +30,7 @@ APPLE_COLOR = (255, 0, 0)
 SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
-SPEED = 0.2
+SPEED = 4
 
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -57,10 +57,11 @@ class Apple(GameObject):
 
     def __init__(self):
         self.body_color = (255, 0, 0)
-        self.randomize_position()
-        
-    def randomize_position(self):
         self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE, randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
+        
+    def randomize_position(self, snake):
+          while self.position in snake.positions:
+            self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE, randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
 
     def draw(self, surface):
         rect = pygame.Rect((self.position[0], self.position[1]), (GRID_SIZE, GRID_SIZE))
@@ -89,7 +90,7 @@ class Snake(GameObject):
         head_position = self.positions[0]
         return head_position
 
-    def move(self):
+    def move(self, apple):
         head_position = self.get_head_position()
         x = head_position[0]
         y = head_position[1]
@@ -102,13 +103,14 @@ class Snake(GameObject):
         elif self.direction == RIGHT:
             self.positions.insert(0, (x + GRID_SIZE, y))
 
-        if len(self.positions) != 0:
-            self.last = self.positions[-1]
+        #if len(self.positions) != 0:
+            #self.last = self.positions[-1]
+        if apple.position not in self.positions:
             self.positions.pop(-1)
 
     # Метод draw класса Snake
     def draw(self, surface):
-        for position in self.positions[:-1]:
+        for position in self.positions:
             rect = (pygame.Rect((position[0], position[1]), (GRID_SIZE, GRID_SIZE)))
             pygame.draw.rect(surface, self.body_color, rect)
             pygame.draw.rect(surface, BORDER_COLOR, rect, 1)
@@ -117,15 +119,7 @@ class Snake(GameObject):
         head_rect = pygame.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
         pygame.draw.rect(surface, self.body_color, head_rect)
         pygame.draw.rect(surface, BORDER_COLOR, head_rect, 1)
-
-        # Затирание последнего сегмента
-        if self.last:
-            last_rect = pygame.Rect(
-                (self.last[0], self.last[1]),
-                (GRID_SIZE, GRID_SIZE)
-            )
-            pygame.draw.rect(surface, BOARD_BACKGROUND_COLOR, last_rect)
-        
+    
 # Функция обработки действий пользователя
 def handle_keys(game_object):
     for event in pygame.event.get():
@@ -149,14 +143,13 @@ def main():
 
     while True:
         clock.tick(SPEED)
-        # for event in pygame.event.get():
-        #     if event.type == pygame.QUIT:
-        #         pygame.quit()
+        screen.fill(BOARD_BACKGROUND_COLOR)
         apple.draw(screen)
         snake.draw(screen)
         handle_keys(snake)
         snake.update_direction()
-        snake.move()
+        snake.move(apple)
+        apple.randomize_position(snake)
         pygame.display.update()
 
         print(snake.positions)
